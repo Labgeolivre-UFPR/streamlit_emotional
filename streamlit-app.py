@@ -18,7 +18,7 @@ from openrouteservice import client
 import json
 
 # --- CONEXÃO COM O BANCO DE DADOS ---#
-conn = None
+conn = psycopg2.connect(**st.secrets["postgres"])
 try:
   # connect to the PostgreSQL server
   print('Connecting to the PostgreSQL database...')
