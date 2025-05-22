@@ -8,7 +8,7 @@ from streamlit_folium import folium_static
 # ────────────────────────────────────────────────────────────────
 # Configurações gerais
 # ────────────────────────────────────────────────────────────────
-DATA_PATH = "data"  # pasta onde ficam os .geojson / .gpkg
+DATA_PATH = "dados"  # pasta onde ficam os .geojson / .gpkg
 ICON_REPO = (
     "https://raw.githubusercontent.com/GabrieleCamara/"
     "Streamlit-EmotionalMaps/main/Lista_Final_Emojis/"
