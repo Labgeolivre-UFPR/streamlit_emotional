@@ -1,6 +1,6 @@
 # requirements
-psycopg2-binary==2.9.2
-openrouteservice==2.3.3
-ortools==9.2.9972
-streamlit-folium==0.4.0
-geopy==2.2.0
+psycopg2-binary
+openrouteservice
+ortools
+streamlit-folium
+geopy
