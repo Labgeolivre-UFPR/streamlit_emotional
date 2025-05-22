@@ -2,5 +2,7 @@
 psycopg2-binary
 openrouteservice
 ortools
-streamlit-folium
 geopy
+streamlit>=1.35
+streamlit-folium>=0.19
+geopandas[all]>=0.14
