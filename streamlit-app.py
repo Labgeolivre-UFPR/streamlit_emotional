@@ -1,240 +1,228 @@
 import streamlit as st
 import geopandas as gpd
 import pandas as pd
-import folium
-from folium import plugins
-from streamlit_folium import folium_static
-
-# ────────────────────────────────────────────────────────────────
-# Configurações gerais
-# ────────────────────────────────────────────────────────────────
-DATA_PATH = "dados"  # pasta onde ficam os .geojson / .gpkg
-ICON_REPO = (
-    "https://raw.githubusercontent.com/GabrieleCamara/"
-    "Streamlit-EmotionalMaps/main/Lista_Final_Emojis/"
+from streamlit_folium import st_folium
+from build_layers import build_layers
+from map_functions import (
+    make_base_map,
+    emoc_indiv,
+    emoc_modal,
+    emoc_cenario,
+    emoc_faixa,
+    emoc_genero,
+    vias_valencia,
 )
 
-st.set_page_config(
-    page_title="Emotional Maps – GeoPandas Edition",
-    layout="wide",
-    page_icon="🗺️",
-)
+DATA_PATH = "dados"  # pasta com GeoJSON/CSV
+ICON_REPO = f"{DATA_PATH}/Lista_Final_Emojis/"
 
-# ────────────────────────────────────────────────────────────────
-# Carregamento de dados (cacheado)
-# ────────────────────────────────────────────────────────────────
+st.set_page_config(page_title="Mapas Emocionais – Mobilidade Urbana", layout="wide", page_icon="🗺️")
 
-@st.cache_data(show_spinner="Carregando camadas GeoJSON …")
+# ────────────────────────── CARREGAMENTO DE DADOS ──────────────────────────
+@st.cache_data(show_spinner="Lendo camadas …")
 def load_data():
-    """Lê todos os GeoJSON necessários e garante CRS WGS‑84."""
     files = {
-        "emoji": "emoji_emoc.geojson",
-        "modais": "modais.geojson",
+        "emoji": "emoji_emoc.csv",
+        "modais": "modais.csv",
         "cenarios": "cenarios.geojson",
-        "participantes": "participantes.geojson",
+        "participantes": "participantes.csv",
         "emoc": "emocoes_coletadas.geojson",
         "pts_cenarios": "pts_cenarios.geojson",
-        "vias": "emoc_ways_vlc_rua.geojson",
+        "ways": "ways.geojson",
     }
-
     gdfs = {}
-    for key, fname in files.items():
-        try:
-            gdf = gpd.read_file(f"{DATA_PATH}/{fname}")
-            if not gdf.crs or gdf.crs.to_epsg() != 4326:
-                gdf = gdf.to_crs(4326)
-            gdfs[key] = gdf
-        except Exception as e:
-            st.warning(f"⚠️ Não foi possível ler {fname}: {e}")
+    for k, f in files.items():
+        p = f"{DATA_PATH}/{f}"
+        if f.endswith(".csv"):
+            gdfs[k] = pd.read_csv(p)
+        else:
+            g = gpd.read_file(p)
+            if not g.crs or g.crs.to_epsg() != 4326:
+                g = g.to_crs(4326)
+            gdfs[k] = g
     return gdfs
 
 DATA = load_data()
+DATA.update(build_layers({
+    "ways": DATA["ways"],
+    "emoc": DATA["emoc"],
+    "emoji": DATA["emoji"],
+}))
 
-# ────────────────────────────────────────────────────────────────
-# Funções auxiliares – listas de seleção
-# ────────────────────────────────────────────────────────────────
+# ────────────────────────── LISTAS AUXILIARES ──────────────────────────
 
 def lista_emoc():
-    return [""] + sorted(DATA["emoji"]["emocao"].unique())
+    return [""] + sorted(DATA["emoji"].emocao.unique())
 
 def lista_valencia():
-    return [""] + sorted(DATA["emoji"]["valencia"].unique())
+    return [""] + sorted(DATA["emoji"].valencia.unique())
 
 def lista_mdl():
-    return [""] + sorted(DATA["modais"]["nome"].unique())
+    return [""] + sorted(DATA["modais"].nome.unique())
 
 def lista_cenarios():
-    return [""] + sorted(DATA["cenarios"]["nome"].unique())
+    return [""] + sorted(DATA["cenarios"].referencia.unique())
 
 def lista_genero():
-    return [""] + sorted(DATA["participantes"]["genero"].dropna().unique())
+    return [""] + sorted(DATA["participantes"].genero.dropna().unique())
 
-def lista_faixa_etaria():
-    return [""] + sorted(DATA["participantes"]["faixa_etaria"].dropna().unique())
+def lista_faixa():
+    return [""] + sorted(DATA["participantes"].faixa_etaria.dropna().unique())
 
-def lista_valencia_ways():
-    return [""] + sorted(DATA["vias"]["vlc_maior_text"].dropna().unique())
+def lista_val_vias():
+    return [""] + sorted(DATA["emoc_ways_vlc_rua"].vlc_maior_text.dropna().unique())
 
-# ────────────────────────────────────────────────────────────────
-# Funções de visualização
-# ────────────────────────────────────────────────────────────────
+# ────────────────────────── INTERFACE ──────────────────────────
 
-def make_base_map():
-    """Cria mapa folium centralizado na média dos pontos coletados."""
-    if not DATA["emoc"].empty:
-        center = DATA["emoc"].geometry.unary_union.centroid
-        return folium.Map(location=[center.y, center.x], zoom_start=13, tiles="CartoDB positron")
-    return folium.Map(location=[0, 0], zoom_start=2)
+def page_explorar():
+    st.header("Explorar Mapas")
+    view = st.selectbox(
+        "Visualização", (
+            "Emoção individual",
+            "Modal + Valência",
+            "Cenário",
+            "Valência nas vias",
+        ), key="view_exp")
+
+    m = make_base_map(DATA)
+
+    if view == "Emoção individual":
+        e = st.selectbox("Emoção", lista_emoc(), key="emo_sel")
+        if e:
+            emoc_indiv(DATA, e, m, ICON_REPO)
+
+    elif view == "Modal + Valência":
+        mdl = st.selectbox("Modal", lista_mdl(), key="mdl_sel")
+        val = st.multiselect("Valências", lista_valencia(), key="val_modal")
+        emoc_modal(DATA, mdl, val, m, ICON_REPO)
+
+    elif view == "Cenário":
+        c = st.selectbox("Cenário", lista_cenarios(), key="cnr_sel")
+        if c:
+            emoc_cenario(DATA, c, m, ICON_REPO)
+
+    else:  # Valência nas vias
+        vlc = st.multiselect("Valências", lista_val_vias(), key="val_via")
+        if vlc:
+            vias_valencia(DATA, vlc, m)
+
+    st_folium(m, use_container_width=True, height=700)
 
 
-def func_emoc_indiv(emoc_indiv, mapa):
-    """Plota todos os pontos de uma emoção específica."""
-    pts = DATA["emoc"].merge(
-        DATA["emoji"][["cod_emoji", "emocao"]], on="cod_emoji"
+def page_consultas():
+    st.header("Realizar Consultas")
+    tab_pt, tab_ln = st.tabs(["Por Pontos", "Por Linhas"])
+
+    with tab_pt:
+        col1, col2 = st.columns(2)
+        with col1:
+            faixa = st.selectbox("Faixa etária", lista_faixa(), key="faixa_q")
+            val = st.multiselect("Valências", lista_valencia(), key="val_pt1")
+            if st.button("Filtrar pontos", key="btn_pt1") and faixa:
+                m = make_base_map(DATA)
+                emoc_faixa(DATA, faixa, val, m, ICON_REPO)
+                st_folium(m, use_container_width=True, height=600)
+        with col2:
+            gen = st.selectbox("Gênero", lista_genero(), key="gen_q")
+            val2 = st.multiselect("Valências", lista_valencia(), key="val_pt2")
+            if st.button("Filtrar por gênero", key="btn_pt2") and gen:
+                m = make_base_map(DATA)
+                emoc_genero(DATA, gen, val2, m, ICON_REPO)
+                st_folium(m, use_container_width=True, height=600)
+
+    with tab_ln:
+        vlc = st.multiselect("Valência das vias", lista_val_vias(), key="val_ln")
+        if st.button("Filtrar vias", key="btn_ln") and vlc:
+            m = make_base_map(DATA)
+            vias_valencia(DATA, vlc, m)
+            st_folium(m, use_container_width=True, height=600)
+
+
+def page_nav():
+    st.header("Navegação – rotas sugeridas")
+    st.info("Funcionalidade em desenvolvimento.")
+
+
+def page_sobre():
+    st.header("Sobre o Projeto")
+    st.markdown(
+        """
+        **Mapas Emocionais no Contexto da Mobilidade Urbana** (UFPR) investiga a percepção
+        emocional de diferentes públicos em trajetos urbanos.
+
+        Dados coletados em 2024 via aplicativo móvel, integrados ao OpenStreetMap.
+        """
     )
-    sel = pts[pts["emocao"] == emoc_indiv]
-    if sel.empty:
-        st.info("Nenhum ponto para essa emoção.")
-        return
 
-    layer = folium.FeatureGroup(name=f"Emoção: {emoc_indiv}")
-    heat_coords = []
+# ────────────────────────── MENU LATERAL ──────────────────────────
 
-    for _, row in sel.iterrows():
-        y, x = row.geometry.y, row.geometry.x
-        folium.Marker(
-            location=[y, x],
-            icon=folium.features.CustomIcon(f"{ICON_REPO}{row.cod_emoji}.png", icon_size=(20, 20)),
-        ).add_to(layer)
-        heat_coords.append([y, x])
+st.sidebar.markdown("## 🗺️ Mapas Emocionais\n### Mobilidade Urbana")
+choice = st.sidebar.radio("Menu", ["Explorar Mapas", "Realizar Consultas", "Navegação", "Sobre"], index=0)
 
-    layer.add_to(mapa)
-    plugins.HeatMap(heat_coords, name=f"Heat-map {emoc_indiv}", radius=20, blur=15).add_to(mapa)
+if choice == "Explorar Mapas":
+    page_explorar()
+# ───────── Página: Realizar Consultas ─────────
+elif choice == "Realizar Consultas":
+    st.header("Realizar Consultas")
+    tab_pt, tab_ln = st.tabs(["Por Pontos", "Por Linhas"])
 
+    # ---------- POR PONTOS ----------
+    with tab_pt:
+        col1, col2 = st.columns(2)
 
-def func_emoc_mdl(emoc_mdl, emoc_vlc, mapa):
-    """Filtra por modal e valência."""
-    pts = (
-        DATA["emoc"]
-        .merge(DATA["emoji"][["cod_emoji", "valencia"]], on="cod_emoji")
-        .merge(DATA["modais"][["cod_modal", "nome"]], on="cod_modal")
-    )
-    if emoc_mdl:
-        pts = pts[pts["nome"] == emoc_mdl]
-    if emoc_vlc:
-        if isinstance(emoc_vlc, str):
-            emoc_vlc = [emoc_vlc]
-        pts = pts[pts["valencia"].isin(emoc_vlc)]
-    if pts.empty:
-        st.info("Nenhum ponto com esses filtros.")
-        return
+        # --- Faixa etária ---
+        with col1:
+            faixa = st.selectbox("Faixa etária", lista_faixa(),
+                                 key="faixa_q")
+            val = st.multiselect("Valências", lista_valencia(),
+                                 key="val_pt1")
 
-    lyr_name = f"{emoc_mdl or 'Todos os modais'} – {', '.join(emoc_vlc) if emoc_vlc else 'Todas as valências'}"
-    layer = folium.FeatureGroup(name=lyr_name)
-    heat_coords = []
-    for _, row in pts.iterrows():
-        y, x = row.geometry.y, row.geometry.x
-        folium.Marker(
-            location=[y, x],
-            icon=folium.features.CustomIcon(f"{ICON_REPO}{row.cod_emoji}.png", icon_size=(20, 20)),
-            tooltip=f"{row.valencia} – {row.nome}",
-        ).add_to(layer)
-        heat_coords.append([y, x])
-    layer.add_to(mapa)
-    plugins.HeatMap(heat_coords, name=f"Heat-map {lyr_name}", radius=20, blur=15).add_to(mapa)
+            # botão dentro de um form evita múltiplos reruns
+            with st.form(key="form_faixa"):
+                submit_faixa = st.form_submit_button("Filtrar pontos")
 
+            if submit_faixa:
+                st.session_state["faixa_result"] = (faixa, val)
 
-def func_emoc_cnr(cnr_nome, mapa, mostrar_rota=True):
-    pts = (
-        DATA["emoc"]
-        .merge(DATA["cenarios"][["cod_cenario", "nome"]], on="cod_cenario")
-        .merge(DATA["emoji"][["cod_emoji", "valencia"]], on="cod_emoji")
-    )
-    sel = pts[pts["nome"] == cnr_nome]
-    if sel.empty:
-        st.info("Nenhum ponto para esse cenário.")
-        return
+            if "faixa_result" in st.session_state:
+                faixa_sel, val_sel = st.session_state["faixa_result"]
+                m = make_base_map(DATA)
+                emoc_faixa(DATA, faixa_sel, val_sel, m, ICON_REPO)
+                st_folium(m, height=600, use_container_width=True)
 
-    layer = folium.FeatureGroup(name=f"Pontos – {cnr_nome}")
-    heat_coords = []
-    for _, row in sel.iterrows():
-        y, x = row.geometry.y, row.geometry.x
-        folium.Marker(
-            location=[y, x],
-            icon=folium.features.CustomIcon(f"{ICON_REPO}{row.cod_emoji}.png", icon_size=(20, 20)),
-            tooltip=row.valencia,
-        ).add_to(layer)
-        heat_coords.append([y, x])
-    layer.add_to(mapa)
-    plugins.HeatMap(heat_coords, name=f"Heat-map {cnr_nome}", radius=20, blur=15).add_to(mapa)
+        # --- Gênero ---
+        with col2:
+            gen = st.selectbox("Gênero", lista_genero(),
+                               key="gen_q")
+            val2 = st.multiselect("Valências", lista_valencia(),
+                                  key="val_pt2")
 
-    if mostrar_rota and "pts_cenarios" in DATA:
-        rota = DATA["pts_cenarios"].merge(
-            DATA["cenarios"][["cod_cenario", "nome"]], on="cod_cenario"
-        )
-        rota_sel = rota[rota["nome"] == cnr_nome]
-        if not rota_sel.empty:
-            folium.GeoJson(
-                rota_sel.__geo_interface__,
-                name=f"Rota {cnr_nome}",
-                style_function=lambda _: {"color": "#3264a8", "weight": 4, "opacity": 0.8},
-            ).add_to(mapa)
+            with st.form(key="form_genero"):
+                submit_gen = st.form_submit_button("Filtrar por gênero")
 
+            if submit_gen:
+                st.session_state["gen_result"] = (gen, val2)
 
-def func_emoc_lns(valencias, mapa):
-    vias = DATA["vias"]
-    sel = vias[vias["vlc_maior_text"].isin(valencias)]
-    if sel.empty:
-        st.info("Nenhuma via com essas valências.")
-        return
+            if "gen_result" in st.session_state:
+                gen_sel, val2_sel = st.session_state["gen_result"]
+                m = make_base_map(DATA)
+                emoc_genero(DATA, gen_sel, val2_sel, m, ICON_REPO)
+                st_folium(m, height=600, use_container_width=True)
 
-    def style(feature):
-        cor = {"Neutro": "#f6dd1e", "Negativo": "#d7191c"}.get(
-            feature["properties"]["vlc_maior_text"], "#1a9641"
-        )
-        return {"color": cor, "weight": 5}
+    # ---------- POR LINHAS ----------
+    with tab_ln:
+        vlc = st.multiselect("Valência das vias", lista_val_vias(),
+                             key="val_ln")
+        if st.button("Filtrar vias", key="btn_ln"):
+            st.session_state["vias_result"] = vlc
 
-    folium.GeoJson(
-        sel.__geo_interface__, name="Vias por valência", style_function=style
-    ).add_to(mapa)
+        if "vias_result" in st.session_state:
+            vlc_sel = st.session_state["vias_result"]
+            m = make_base_map(DATA)
+            vias_valencia(DATA, vlc_sel, m)
+            st_folium(m, height=600)
 
-# ────────────────────────────────────────────────────────────────
-# Interface Streamlit
-# ────────────────────────────────────────────────────────────────
-
-st.title("🗺️ Emotional Maps – versão GeoPandas")
-
-viz_type = st.sidebar.selectbox(
-    "Tipo de visualização",
-    (
-        "Emoção individual",
-        "Modal + Valência",
-        "Cenário",
-        "Valência nas vias",
-    ),
-)
-
-m = make_base_map()
-
-if viz_type == "Emoção individual":
-    emoc_escolhida = st.sidebar.selectbox("Emoção", lista_emoc())
-    if emoc_escolhida:
-        func_emoc_indiv(emoc_escolhida, m)
-
-elif viz_type == "Modal + Valência":
-    modal_sel = st.sidebar.selectbox("Modal", lista_mdl())
-    valencias_sel = st.sidebar.multiselect("Valência", lista_valencia())
-    func_emoc_mdl(modal_sel, valencias_sel, m)
-
-elif viz_type == "Cenário":
-    cnr_sel = st.sidebar.selectbox("Cenário", lista_cenarios())
-    if cnr_sel:
-        func_emoc_cnr(cnr_sel, m, mostrar_rota=True)
-
-elif viz_type == "Valência nas vias":
-    vlc_sel = st.sidebar.multiselect("Valência", lista_valencia_ways())
-    if vlc_sel:
-        func_emoc_lns(vlc_sel, m)
-
-folium.LayerControl().add_to(m)
-folium_static(m, height=750)
+elif choice == "Navegação":
+    page_nav()
+else:
+    page_sobre()

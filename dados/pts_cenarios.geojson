@@ -3,15 +3,15 @@
 "name": "pts_cenarios",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.2854665, -25.4286571, 0.0 ] } },
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.2913058, -25.441859, 0.0 ] } },
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.2640305, -25.4370688, 0.0 ] } },
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.2328101, -25.4533766, 0.0 ] } },
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.2666628, -25.4099059, 0.0 ] } },
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.287249499999987, -25.4458881, 0.0 ] } },
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.2618606, -25.427135, 0.0 ] } },
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.2386155, -25.4451953, 0.0 ] } },
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.2650507, -25.4280806, 0.0 ] } },
-{ "type": "Feature", "properties": { }, "geometry": { "type": "Point", "coordinates": [ -49.2742667, -25.4274725, 0.0 ] } }
+{ "type": "Feature", "properties": { "fid": 1, "cod_cenario": 1, "pt_referencia": "Fim" }, "geometry": { "type": "Point", "coordinates": [ -49.2854665, -25.4286571, 0.0 ] } },
+{ "type": "Feature", "properties": { "fid": 2, "cod_cenario": 1, "pt_referencia": "Início" }, "geometry": { "type": "Point", "coordinates": [ -49.2913058, -25.441859, 0.0 ] } },
+{ "type": "Feature", "properties": { "fid": 3, "cod_cenario": 2, "pt_referencia": "Fim" }, "geometry": { "type": "Point", "coordinates": [ -49.2640305, -25.4370688, 0.0 ] } },
+{ "type": "Feature", "properties": { "fid": 4, "cod_cenario": 2, "pt_referencia": "Início" }, "geometry": { "type": "Point", "coordinates": [ -49.2328101, -25.4533766, 0.0 ] } },
+{ "type": "Feature", "properties": { "fid": 5, "cod_cenario": 4, "pt_referencia": "Fim" }, "geometry": { "type": "Point", "coordinates": [ -49.2666628, -25.4099059, 0.0 ] } },
+{ "type": "Feature", "properties": { "fid": 6, "cod_cenario": 4, "pt_referencia": "Início" }, "geometry": { "type": "Point", "coordinates": [ -49.287249499999987, -25.4458881, 0.0 ] } },
+{ "type": "Feature", "properties": { "fid": 7, "cod_cenario": 3, "pt_referencia": "Fim" }, "geometry": { "type": "Point", "coordinates": [ -49.2618606, -25.427135, 0.0 ] } },
+{ "type": "Feature", "properties": { "fid": 8, "cod_cenario": 3, "pt_referencia": "Início" }, "geometry": { "type": "Point", "coordinates": [ -49.2386155, -25.4451953, 0.0 ] } },
+{ "type": "Feature", "properties": { "fid": 9, "cod_cenario": 5, "pt_referencia": "Fim" }, "geometry": { "type": "Point", "coordinates": [ -49.2650507, -25.4280806, 0.0 ] } },
+{ "type": "Feature", "properties": { "fid": 10, "cod_cenario": 5, "pt_referencia": "Início" }, "geometry": { "type": "Point", "coordinates": [ -49.2742667, -25.4274725, 0.0 ] } }
 ]
 }

@@ -1,0 +1,21 @@
+cod_emoji,emocao,valencia
+1,"Ansiedade, Pressa, Correria",Neutro
+2,"Raiva, Ódio, Irritação",Negativo
+3,Perturbação com barulho,Neutro
+4,"Desconfiança, Suspeita, Receio, Insegurança",Neutro
+5,"Alegria, Bem-estar, Bom humor, Satisfação",Positivo
+6,"Introspecção, Introversão, Reflexivo",Neutro
+7,"Admiração com beleza, Deslumbre, Facinação",Positivo
+8,"Animação, Entusiasmo, Empolgação, Apoio, Inventivo, Força",Positivo
+9,"Gratidão, Agradecimento, Sentindo-se abençoado",Positivo
+10,"Tristeza, Pena, Lamentável",Negativo
+11,"Surpresa, Espanto, Susto",Neutro
+12,"Nojo, Náusea, Enjoo, Desgosto",Negativo
+13,"Cansaço, Fadiga, Exaustão, Fraqueza",Negativo
+14,"Tédio, Lerdeza, Demora, Desatenção",Neutro
+15,"Tranquilidade, Paciência, Relaxamento, Calma",Positivo
+16,"Medo, Tensão, Preocupação, Nervosismo",Negativo
+17,"Medo de assalto, Roubo ou Furto",Negativo
+18,"Medo de acidentes, Atropelamento",Negativo
+19,"Inveja, Dor de Cotovelo, Desejo, Ambição, Proteção contra Inveja",Neutro
+20,"Decepção, Frustração, Insatisfação",Negativo
