@@ -147,17 +147,17 @@ def page_sobre():
     st.header("Sobre o Projeto")
     st.markdown(
         """
-        **Mapas Emocionais no Contexto da Mobilidade Urbana** (UFPR) investiga a percepção
+        **Mapas Emocionais no Contexto da Mobilidade Urbana** investiga a percepção
         emocional de diferentes públicos em trajetos urbanos.
 
-        Dados coletados em 2024 via aplicativo móvel, integrados ao OpenStreetMap.
+        Dados coletados via questionário, integrados ao OpenStreetMap.
         """
     )
 
 # ────────────────────────── MENU LATERAL ──────────────────────────
 
 st.sidebar.markdown("## 🗺️ Mapas Emocionais\n### Mobilidade Urbana")
-choice = st.sidebar.radio("Menu", ["Explorar Mapas", "Realizar Consultas", "Navegação", "Sobre"], index=0)
+choice = st.sidebar.radio("Menu", ["Explorar Mapas", "Realizar Consultas", "Sobre"], index=0)
 
 if choice == "Explorar Mapas":
     page_explorar()
@@ -222,7 +222,5 @@ elif choice == "Realizar Consultas":
             vias_valencia(DATA, vlc_sel, m)
             st_folium(m, height=600)
 
-elif choice == "Navegação":
-    page_nav()
 else:
     page_sobre()
