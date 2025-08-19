@@ -14,7 +14,8 @@ from map_functions import (
     emoc_genero,
     vias_valencia,
 )
-from i18n import t
+from i18n import t, reload_locales, available_languages  # <— adicione reload_locales
+reload_locales()  # limpa o cache do i18n
 
 # ⚠️ PRIMEIRO comando Streamlit do arquivo (evita o aviso):
 st.set_page_config(page_title="Emotional Maps", layout="wide", page_icon="🗺️")
