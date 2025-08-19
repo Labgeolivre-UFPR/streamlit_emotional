@@ -5,6 +5,20 @@ import pandas as pd
 EPSG_METRIC = 32722      # UTM zona 22 S  (m)
 EPSG_LATLON = 4326       # WGS-84
 
+def _norm_valence(v) -> str | None:
+    """Converte rótulos variados para códigos 'neg', 'neu', 'pos'."""
+    if pd.isna(v):
+        return None
+    s = str(v).strip().lower()
+    if s in {"neg", "negative", "negativo", "-1", "−1"}:
+        return "neg"
+    if s in {"neu", "neutral", "neutro", "0"}:
+        return "neu"
+    if s in {"pos", "positive", "positivo", "1"}:
+        return "pos"
+    # fallback: devolve como veio (mas o ideal é padronizar na tabela)
+    return s
+
 def build_layers(raw: dict) -> dict:
     """
     Constrói todos os GeoDataFrames equivalentes às views SQL

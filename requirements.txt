@@ -6,3 +6,5 @@ geopy
 streamlit>=1.35
 streamlit-folium>=0.19
 geopandas[all]>=0.14
+PyYAML>=6.0
+Babel>=2.15

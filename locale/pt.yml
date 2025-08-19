@@ -1,0 +1,81 @@
+app:
+  title: "Mapa de Emoções"
+  subtitle: "Exploração espacial de relatos"
+  sidebar:
+    language: "Idioma"
+    dataset: "Conjunto de dados"
+    filters: "Filtros"
+    reset: "Limpar filtros"
+  map:
+    heatmap: "Mapa de calor"
+    points: "Pontos"
+    basemap: "Mapa base"
+  metrics:
+    total_records: "Registros"
+    filtered_records: "Filtrados"
+  footer:
+    credits: "Desenvolvido por {lab}"
+
+loading:
+  data: "Lendo camadas…"
+
+common:
+  all_masculine: "Todos"
+  all_feminine: "todas"
+
+metrics:
+  valence:
+    negative: "Negativa"
+    neutral: "Neutra"
+    positive: "Positiva"
+
+map:
+  layers:
+    scenarios: "Cenários"
+    heat: "Mapa de calor"
+    roads: "Vias"
+    emotion_single: "Emoção: {emotion}"
+    scenario_named: "Cenário {scenario}"
+    age_range_named: "Faixa {age}"
+    gender_named: "Gênero {gender}"
+  legend:
+    scenarios_title: "Cenários"
+
+ui:
+  explore_maps: "Explorar Mapas"
+  perform_queries: "Realizar Consultas"
+  about: "Sobre o Projeto"
+  visualization: "Visualização"
+  views:
+    emotion_single: "Emoção individual"
+    modal_valence: "Modal + Valência"
+    scenario: "Cenário"
+    valence_on_roads: "Valência nas vias"
+  select:
+    emotion: "Emoção"
+    modal: "Modal"
+    valences: "Valências"
+    valences_roads: "Valência das vias"
+    scenario: "Cenário"
+    age_range: "Faixa etária"
+    gender: "Gênero"
+  buttons:
+    filter_points: "Filtrar pontos"
+    filter_gender: "Filtrar por gênero"
+    filter_roads: "Filtrar vias"
+  tabs:
+    points: "Por Pontos"
+    lines: "Por Linhas"
+  navigation:
+    header: "Navegação – rotas sugeridas"
+    wip: "Funcionalidade em desenvolvimento."
+  sidebar:
+    menu: "Menu"
+
+about:
+  body_md: |
+    **Mapas Emocionais no Contexto da Mobilidade Urbana** investiga a percepção
+    emocional de diferentes públicos em trajetos urbanos.
+
+    Dados coletados via questionário, integrados ao OpenStreetMap.
+

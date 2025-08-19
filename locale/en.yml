@@ -1,0 +1,80 @@
+app:
+  title: "Emotional Maps"
+  subtitle: "Spatial exploration of reports"
+  sidebar:
+    language: "Language"
+    dataset: "Dataset"
+    filters: "Filters"
+    reset: "Reset filters"
+  map:
+    heatmap: "Heatmap"
+    points: "Points"
+    basemap: "Basemap"
+  metrics:
+    total_records: "Records"
+    filtered_records: "Filtered"
+  footer:
+    credits: "Built by {lab}"
+
+loading:
+  data: "Loading layers…"
+
+common:
+  all_masculine: "All"
+  all_feminine: "all"
+
+metrics:
+  valence:
+    negative: "Negative"
+    neutral: "Neutral"
+    positive: "Positive"
+
+map:
+  layers:
+    scenarios: "Scenarios"
+    heat: "Heatmap"
+    roads: "Roads"
+    emotion_single: "Emotion: {emotion}"
+    scenario_named: "Scenario {scenario}"
+    age_range_named: "Age range {age}"
+    gender_named: "Gender {gender}"
+  legend:
+    scenarios_title: "Scenarios"
+
+ui:
+  explore_maps: "Explore Maps"
+  perform_queries: "Run Queries"
+  about: "About"
+  visualization: "View"
+  views:
+    emotion_single: "Single emotion"
+    modal_valence: "Mode + Valence"
+    scenario: "Scenario"
+    valence_on_roads: "Valence on roads"
+  select:
+    emotion: "Emotion"
+    modal: "Mode"
+    valences: "Valences"
+    valences_roads: "Road valence"
+    scenario: "Scenario"
+    age_range: "Age range"
+    gender: "Gender"
+  buttons:
+    filter_points: "Filter points"
+    filter_gender: "Filter by gender"
+    filter_roads: "Filter roads"
+  tabs:
+    points: "Points"
+    lines: "Lines"
+  navigation:
+    header: "Navigation – suggested routes"
+    wip: "Feature under development."
+  sidebar:
+    menu: "Menu"
+
+about:
+  body_md: |
+    **Emotion Maps in Urban Mobility** investigates how different groups feel
+    along urban routes.
+
+    Data collected via questionnaire, integrated with OpenStreetMap.
