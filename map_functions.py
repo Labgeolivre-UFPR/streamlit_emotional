@@ -91,7 +91,7 @@ def make_base_map(data, tiles: str = "CartoDB positron", include_cenarios: bool 
     if include_cenarios:
         add_cenarios(data, m, lang)
 
-    folium.LayerControl(collapsed=False).add_to(m)
+    #folium.LayerControl(collapsed=False).add_to(m)
     return m
 
 # ---------------------------------------------------------------------------------
