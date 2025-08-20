@@ -126,27 +126,37 @@ def lista_val_vias_codes():
     return sorted(vals, key=lambda x: order.get(x, 99))
 
 # ────────────────────────── PÁGINAS ──────────────────────────
+# streamlit-app.py (versão corrigida e mais robusta)
+
 def page_explorar():
     st.header(t("ui.explore_maps", lang))
-    view = st.selectbox(
+
+    # 1. Defina chaves estáveis (em inglês, por convenção) para cada visualização.
+    view_options = {
+        "emotion_single": t("ui.views.emotion_single", lang),
+        "modal_valence": t("ui.views.modal_valence", lang),
+        "scenario": t("ui.views.scenario", lang),
+        "valence_on_roads": t("ui.views.valence_on_roads", lang),
+    }
+
+    # 2. Use as CHAVES como opções e `format_func` para mostrar os valores traduzidos.
+    # O selectbox agora retornará a chave estável (ex: "emotion_single").
+    view_key = st.selectbox(
         t("ui.visualization", lang),
-        (
-            t("ui.views.emotion_single", lang),
-            t("ui.views.modal_valence", lang),
-            t("ui.views.scenario", lang),
-            t("ui.views.valence_on_roads", lang),
-        ),
+        options=list(view_options.keys()),
+        format_func=lambda key: view_options[key], # Mostra o texto traduzido
         key="view_exp",
     )
 
     m = make_base_map(DATA, lang=lang)
 
-    if view == t("ui.views.emotion_single", lang):
+    # 3. Use as chaves estáveis e não traduzidas para a lógica do if/elif.
+    if view_key == "emotion_single":
         e = st.selectbox(t("ui.select.emotion", lang), lista_emoc(), key="emo_sel")
         if e:
             emoc_indiv(DATA, e, m, ICON_REPO, lang=lang)
 
-    elif view == t("ui.views.modal_valence", lang):
+    elif view_key == "modal_valence":
         mdl = st.selectbox(t("ui.select.modal", lang), lista_mdl(), key="mdl_sel")
         choices = valence_choices(lang)
         val = st.multiselect(
@@ -157,12 +167,12 @@ def page_explorar():
         )
         emoc_modal(DATA, mdl, val, m, ICON_REPO, lang=lang)
 
-    elif view == t("ui.views.scenario", lang):
+    elif view_key == "scenario":
         c = st.selectbox(t("ui.select.scenario", lang), lista_cenarios(), key="cnr_sel")
         if c:
             emoc_cenario(DATA, c, m, ICON_REPO, lang=lang)
 
-    else:  # Valência nas vias
+    elif view_key == "valence_on_roads":  # É mais explícito que usar 'else'
         road_codes = lista_val_vias_codes()
         choices = valence_choices(lang)
         code2label = dict(choices)
@@ -172,8 +182,10 @@ def page_explorar():
             format_func=lambda code: code2label.get(code, code),
             key="val_via",
         )
+        # O original não filtrava se a seleção estivesse vazia, adicionei o 'if'
         if vlc:
             vias_valencia(DATA, vlc, m, lang=lang)
+        # Se quiser mostrar todas as vias quando nada for selecionado, remova o 'if'
 
     st_folium(m, use_container_width=True, height=700)
 
