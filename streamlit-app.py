@@ -153,12 +153,24 @@ def page_explorar():
 
     # 3. Use as chaves estáveis e não traduzidas para a lógica do if/elif.
     if view_key == "emotion_single":
-        e = st.selectbox(t("ui.select.emotion", lang), lista_emoc(), key="emo_sel")
+        # ----- MODIFICAÇÃO AQUI -----
+        e = st.selectbox(
+            t("ui.select.emotion", lang),
+            lista_emoc(),
+            format_func=lambda emocao: t(f"data.emotion.{emocao}", lang), # Traduz a emoção
+            key="emo_sel"
+        )
         if e:
             emoc_indiv(DATA, e, m, ICON_REPO, lang=lang)
 
     elif view_key == "modal_valence":
-        mdl = st.selectbox(t("ui.select.modal", lang), lista_mdl(), key="mdl_sel")
+        # ----- MODIFICAÇÃO AQUI -----
+        mdl = st.selectbox(
+            t("ui.select.modal", lang),
+            lista_mdl(),
+            format_func=lambda modal: t(f"data.mode.{modal}", lang), # Traduz o modal
+            key="mdl_sel"
+        )
         choices = valence_choices(lang)
         val = st.multiselect(
             t("ui.select.valences", lang),
@@ -232,7 +244,13 @@ def page_consultas():
         # Gênero
         with col2:
             st.subheader(t("ui.select.gender", lang))
-            gen = st.selectbox("", lista_genero(), key="gen_q")
+            # ----- MODIFICAÇÃO AQUI -----
+            gen = st.selectbox(
+                "",
+                lista_genero(),
+                format_func=lambda genero: t(f"data.gender.{genero}", lang), # Traduz o gênero
+                key="gen_q"
+            )
             choices2 = valence_choices(lang)
             val2 = st.multiselect(
                 t("ui.select.valences", lang),

@@ -79,3 +79,48 @@ about:
 
     Dados coletados via questionário, integrados ao OpenStreetMap.
 
+data:
+  # Gêneros
+  gender:
+    Feminino: "Feminino"
+    Masculino: "Masculino"
+    Outro: "Outro"
+
+  # Modais
+  mode:
+    "A pé": "A pé"
+    Bicicleta: "Bicicleta"
+    Carro: "Carro"
+    Moto: "Moto"
+    "Transporte Coletivo": "Transporte Coletivo"
+    "Transporte por Aplicativo": "Transporte por Aplicativo"
+    Outro: "Outro"
+
+  # Emoções
+  emotion:
+    Acolhimento: "Acolhimento"
+    Alegria: "Alegria"
+    Alívio: "Alívio"
+    Angústia: "Angústia"
+    Ansiedade: "Ansiedade"
+    "Bem-estar": "Bem-estar"
+    "Bom humor": "Bom humor"
+    Calma: "Calma"
+    Confiança: "Confiança"
+    Conforto: "Conforto"
+    Desconforto: "Desconforto"
+    Desgosto: "Desgosto"
+    Empolgação: "Empolgação"
+    Esperança: "Esperança"
+    Estresse: "Estresse"
+    Felicidade: "Felicidade"
+    Frustração: "Frustração"
+    Insegurança: "Insegurança"
+    Medo: "Medo"
+    Ódio: "Ódio"
+    Paz: "Paz"
+    Preocupação: "Preocupação"
+    Raiva: "Raiva"
+    Segurança: "Segurança"
+    Tranquilidade: "Tranquilidade"
+    Tristeza: "Tristeza"

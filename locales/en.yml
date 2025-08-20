@@ -78,3 +78,48 @@ about:
     along urban routes.
 
     Data collected via questionnaire, integrated with OpenStreetMap.
+
+data:
+  # Gêneros
+  gender:
+    Feminino: "Female"
+    Masculino: "Male"
+    Outro: "Other" # Adicione outros que possam existir
+
+  # Modais
+  mode:
+    "A pé": "On foot"
+    Bicicleta: "Bicycle"
+    Carro: "Car"
+    Moto: "Motorcycle"
+    "Transporte Coletivo": "Public Transit"
+    "Transporte por Aplicativo": "Ride-sharing App"
+    Outro: "Other"
+
+  emotion:
+    Acolhimento: "Acceptance"
+    Alegria: "Joy"
+    Alívio: "Relief"
+    Angústia: "Anguish"
+    Ansiedade: "Anxiety"
+    "Bem-estar": "Well-being"
+    "Bom humor": "Good mood"
+    Calma: "Calm"
+    Confiança: "Confidence"
+    Conforto: "Comfort"
+    Desconforto: "Discomfort"
+    Desgosto: "Displeasure"
+    Empolgação: "Excitement"
+    Esperança: "Hope"
+    Estresse: "Stress"
+    Felicidade: "Happiness"
+    Frustração: "Frustration"
+    Insegurança: "Insecurity"
+    Medo: "Fear"
+    Ódio: "Hatred"
+    Paz: "Peace"
+    Preocupação: "Worry"
+    Raiva: "Anger"
+    Segurança: "Safety"
+    Tranquilidade: "Tranquility"
+    Tristeza: "Sadness"
