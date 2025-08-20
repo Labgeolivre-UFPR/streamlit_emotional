@@ -148,7 +148,7 @@ def page_explorar():
         key="view_exp",
     )
 
-    m = make_base_map(DATA, lang=lang)
+    m = make_base_map(DATA, lang=lang, tiles="OpenStreetMap")
 
     # 3. Use as chaves estáveis e não traduzidas para a lógica do if/elif.
     if view_key == "emotion_single":
@@ -208,7 +208,7 @@ def page_consultas():
                 key="val_pt1",
             )
             if st.button(t("ui.buttons.filter_points", lang), key="btn_pt1") and faixa:
-                m = make_base_map(DATA, lang=lang)
+                m = make_base_map(DATA, lang=lang, tiles="OpenStreetMap")
                 emoc_faixa(DATA, faixa, val, m, ICON_REPO, lang=lang)
                 st_folium(m, key="query_map_age",use_container_width=True, height=600)
 
@@ -223,7 +223,7 @@ def page_consultas():
                 key="val_pt2",
             )
             if st.button(t("ui.buttons.filter_gender", lang), key="btn_pt2") and gen:
-                m = make_base_map(DATA, lang=lang)
+                m = make_base_map(DATA, lang=lang, tiles="OpenStreetMap")
                 emoc_genero(DATA, gen, val2, m, ICON_REPO, lang=lang)
                 st_folium(m, key="query_map_gender", use_container_width=True, height=600)
 
