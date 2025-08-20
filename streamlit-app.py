@@ -190,8 +190,15 @@ def page_explorar():
     folium.LayerControl(collapsed=False).add_to(m)
     st_folium(m, key="explore_map", use_container_width=True, height=700)
 
+# streamlit-app.py (substitua a função inteira)
+
 def page_consultas():
     st.header(t("ui.perform_queries", lang))
+
+    # Inicializa a variável de estado se ela não existir
+    if 'consulta_ativa' not in st.session_state:
+        st.session_state.consulta_ativa = None
+
     tab_pt, tab_ln = st.tabs([t("ui.tabs.points", lang), t("ui.tabs.lines", lang)])
 
     # ---------- POR PONTOS ----------
@@ -200,7 +207,8 @@ def page_consultas():
 
         # Faixa etária
         with col1:
-            faixa = st.selectbox(t("ui.select.age_range", lang), lista_faixa(), key="faixa_q")
+            st.subheader(t("ui.select.age_range", lang))
+            faixa = st.selectbox("", lista_faixa(), key="faixa_q")
             choices = valence_choices(lang)
             val = st.multiselect(
                 t("ui.select.valences", lang),
@@ -208,15 +216,23 @@ def page_consultas():
                 format_func=lambda code: dict(choices)[code],
                 key="val_pt1",
             )
-            if st.button(t("ui.buttons.filter_points", lang), key="btn_pt1") and faixa:
-                m = make_base_map(DATA, lang=lang, tiles="OpenStreetMap")
-                emoc_faixa(DATA, faixa, val, m, ICON_REPO, lang=lang)
-                folium.LayerControl(collapsed=False).add_to(m)
-                st_folium(m, key="query_map_age",use_container_width=True, height=600)
+            
+            b1, b2 = st.columns(2)
+            if b1.button(t("ui.buttons.filter_points", lang), key="btn_pt1", use_container_width=True):
+                if faixa:
+                    # Salva os parâmetros da consulta no estado
+                    st.session_state.consulta_ativa = {"tipo": "faixa", "faixa": faixa, "val": val}
+                else:
+                    st.warning("Por favor, selecione uma faixa etária.")
+
+            if b2.button("Limpar", key="clear_pt1", use_container_width=True):
+                st.session_state.consulta_ativa = None
+                st.rerun() # Força a re-execução para limpar o mapa
 
         # Gênero
         with col2:
-            gen = st.selectbox(t("ui.select.gender", lang), lista_genero(), key="gen_q")
+            st.subheader(t("ui.select.gender", lang))
+            gen = st.selectbox("", lista_genero(), key="gen_q")
             choices2 = valence_choices(lang)
             val2 = st.multiselect(
                 t("ui.select.valences", lang),
@@ -224,29 +240,59 @@ def page_consultas():
                 format_func=lambda code: dict(choices2)[code],
                 key="val_pt2",
             )
-            if st.button(t("ui.buttons.filter_gender", lang), key="btn_pt2") and gen:
-                m = make_base_map(DATA, lang=lang, tiles="OpenStreetMap")
-                emoc_genero(DATA, gen, val2, m, ICON_REPO, lang=lang)
-                folium.LayerControl(collapsed=False).add_to(m)
-                st_folium(m, key="query_map_gender", use_container_width=True, height=600)
+
+            b3, b4 = st.columns(2)
+            if b3.button(t("ui.buttons.filter_gender", lang), key="btn_pt2", use_container_width=True):
+                if gen:
+                    # Salva os parâmetros da consulta no estado
+                    st.session_state.consulta_ativa = {"tipo": "genero", "gen": gen, "val2": val2}
+                else:
+                    st.warning("Por favor, selecione um gênero.")
+
+            if b4.button("Limpar", key="clear_pt2", use_container_width=True):
+                st.session_state.consulta_ativa = None
+                st.rerun()
 
     # ---------- POR LINHAS ----------
     with tab_ln:
         road_codes = lista_val_vias_codes()
-        choices = valence_choices(lang)
-        code2label = dict(choices)
-        vlc = st.multiselect(
+        choices_ln = valence_choices(lang)
+        code2label_ln = dict(choices_ln)
+        vlc = st.multisecontainer_width=True(
             t("ui.select.valences_roads", lang),
             options=road_codes,
-            format_func=lambda code: code2label.get(code, code),
+            format_func=lambda code: code2label_ln.get(code, code),
             key="val_ln",
         )
-        if st.button(t("ui.buttons.filter_roads", lang), key="btn_ln") and vlc:
-            m = make_base_map(DATA, lang=lang)
-            vias_valencia(DATA, vlc, m, lang=lang)
-            folium.LayerControl(collapsed=False).add_to(m)
-            st_folium(m,key="query_map_lines", use_container_width=True, height=600)
+        b5, b6 = st.columns([3,1]) # Botão de filtrar maior
+        if b5.button(t("ui.buttons.filter_roads", lang), key="btn_ln", use_container_width=True):
+            if vlc:
+                # Salva os parâmetros da consulta no estado
+                st.session_state.consulta_ativa = {"tipo": "vias", "vlc": vlc}
+            else:
+                st.warning("Por favor, selecione ao menos uma valência.")
 
+        if b6.button("Limpar", key="clear_ln", use_container_width=True):
+            st.session_state.consulta_ativa = None
+            st.rerun()
+
+    # --- LÓGICA DE EXIBIÇÃO DO MAPA ---
+    # Fica fora das abas e colunas, e verifica o estado da sessão
+    if st.session_state.consulta_ativa:
+        st.divider()
+        m = make_base_map(DATA, lang=lang)
+        
+        consulta = st.session_state.consulta_ativa
+        if consulta["tipo"] == "faixa":
+            emoc_faixa(DATA, consulta["faixa"], consulta["val"], m, ICON_REPO, lang=lang)
+        elif consulta["tipo"] == "genero":
+            emoc_genero(DATA, consulta["gen"], consulta["val2"], m, ICON_REPO, lang=lang)
+        elif consulta["tipo"] == "vias":
+            vias_valencia(DATA, consulta["vlc"], m, lang=lang)
+
+        folium.LayerControl(collapsed=False).add_to(m)
+        # Uma única chamada st_folium com uma key fixa
+        st_folium(m, key="query_map", use_container_width=True, height=600)
 def page_sobre():
     st.header(t("ui.about", lang))
     st.markdown(t("about.body_md", lang))
