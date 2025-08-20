@@ -187,7 +187,7 @@ def page_explorar():
             vias_valencia(DATA, vlc, m, lang=lang)
         # Se quiser mostrar todas as vias quando nada for selecionado, remova o 'if'
 
-    st_folium(m, use_container_width=True, height=700)
+    st_folium(m, key="explore_map", use_container_width=True, height=700)
 
 def page_consultas():
     st.header(t("ui.perform_queries", lang))
@@ -210,7 +210,7 @@ def page_consultas():
             if st.button(t("ui.buttons.filter_points", lang), key="btn_pt1") and faixa:
                 m = make_base_map(DATA, lang=lang)
                 emoc_faixa(DATA, faixa, val, m, ICON_REPO, lang=lang)
-                st_folium(m, use_container_width=True, height=600)
+                st_folium(m, key="query_map_age",use_container_width=True, height=600)
 
         # Gênero
         with col2:
@@ -225,7 +225,7 @@ def page_consultas():
             if st.button(t("ui.buttons.filter_gender", lang), key="btn_pt2") and gen:
                 m = make_base_map(DATA, lang=lang)
                 emoc_genero(DATA, gen, val2, m, ICON_REPO, lang=lang)
-                st_folium(m, use_container_width=True, height=600)
+                st_folium(m, key="query_map_gender", use_container_width=True, height=600)
 
     # ---------- POR LINHAS ----------
     with tab_ln:
@@ -241,7 +241,7 @@ def page_consultas():
         if st.button(t("ui.buttons.filter_roads", lang), key="btn_ln") and vlc:
             m = make_base_map(DATA, lang=lang)
             vias_valencia(DATA, vlc, m, lang=lang)
-            st_folium(m, use_container_width=True, height=600)
+            st_folium(m,key="query_map_lines", use_container_width=True, height=600)
 
 def page_sobre():
     st.header(t("ui.about", lang))
