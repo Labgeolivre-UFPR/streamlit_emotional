@@ -258,7 +258,7 @@ def page_consultas():
         road_codes = lista_val_vias_codes()
         choices_ln = valence_choices(lang)
         code2label_ln = dict(choices_ln)
-        vlc = st.multisecontainer_width=True(
+        vlc = st.multiselect(
             t("ui.select.valences_roads", lang),
             options=road_codes,
             format_func=lambda code: code2label_ln.get(code, code),
