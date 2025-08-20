@@ -3,6 +3,7 @@ import streamlit as st
 import geopandas as gpd
 import pandas as pd
 from streamlit_folium import st_folium
+import folium
 
 from build_layers import build_layers
 from map_functions import (
