@@ -149,7 +149,7 @@ def page_explorar():
         key="view_exp",
     )
 
-    m = make_base_map(DATA, lang=lang, tiles="OpenStreetMap")
+    m = make_base_map(DATA, lang=lang, tiles: str = "CartoDB positron")
 
     # 3. Use as chaves estáveis e não traduzidas para a lógica do if/elif.
     if view_key == "emotion_single":
