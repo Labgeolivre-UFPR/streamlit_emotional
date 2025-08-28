@@ -18,7 +18,7 @@ from map_functions import (
 from i18n import t, reload_locales, available_languages  # <— adicione reload_locales
 reload_locales()  # limpa o cache do i18n
 
-# ⚠️ PRIMEIRO comando Streamlit do arquivo (evita o aviso):
+
 st.set_page_config(page_title="Emotional Maps", layout="wide", page_icon="🗺️")
 
 # ────────────────────────── IDIOMA ──────────────────────────
@@ -157,7 +157,7 @@ def page_explorar():
         e = st.selectbox(
             t("ui.select.emotion", lang),
             lista_emoc(),
-            format_func=lambda emocao: t(f"data.emotion.{emocao}", lang), # Traduz a emoção
+            format_func=lambda emocao: t(f"data.emotion.{emocao}", lang) if emocao else "---", # Traduz a emoção
             key="emo_sel"
         )
         if e:
@@ -168,7 +168,7 @@ def page_explorar():
         mdl = st.selectbox(
             t("ui.select.modal", lang),
             lista_mdl(),
-            format_func=lambda modal: t(f"data.mode.{modal}", lang), # Traduz o modal
+            format_func=lambda modal: t(f"data.mode.{modal}", lang) if modal else "---", # Traduz o modal
             key="mdl_sel"
         )
         choices = valence_choices(lang)
@@ -207,9 +207,13 @@ def page_explorar():
 def page_consultas():
     st.header(t("ui.perform_queries", lang))
 
-    # Inicializa a variável de estado se ela não existir
-    if 'consulta_ativa' not in st.session_state:
-        st.session_state.consulta_ativa = None
+    # Variáveis de estado para cada mapa
+    if 'consulta_faixa' not in st.session_state:
+        st.session_state.consulta_faixa = None
+    if 'consulta_genero' not in st.session_state:
+        st.session_state.consulta_genero = None
+    if 'consulta_vias' not in st.session_state:
+        st.session_state.consulta_vias = None
 
     tab_pt, tab_ln = st.tabs([t("ui.tabs.points", lang), t("ui.tabs.lines", lang)])
 
@@ -220,7 +224,12 @@ def page_consultas():
         # Faixa etária
         with col1:
             st.subheader(t("ui.select.age_range", lang))
-            faixa = st.selectbox("", lista_faixa(), key="faixa_q")
+            faixa = st.selectbox(
+                "",
+                lista_faixa(),
+                format_func=lambda faixa: t(f"data.age_range.{faixa}", lang) if faixa else "---",
+                key="faixa_q",
+            )
             choices = valence_choices(lang)
             val = st.multiselect(
                 t("ui.select.valences", lang),
@@ -228,28 +237,24 @@ def page_consultas():
                 format_func=lambda code: dict(choices)[code],
                 key="val_pt1",
             )
-            
-            b1, b2 = st.columns(2)
-            if b1.button(t("ui.buttons.filter_points", lang), key="btn_pt1", use_container_width=True):
-                if faixa:
-                    # Salva os parâmetros da consulta no estado
-                    st.session_state.consulta_ativa = {"tipo": "faixa", "faixa": faixa, "val": val}
-                else:
-                    st.warning("Por favor, selecione uma faixa etária.")
 
-            if b2.button("Limpar", key="clear_pt1", use_container_width=True):
-                st.session_state.consulta_ativa = None
-                st.rerun() # Força a re-execução para limpar o mapa
+            if st.button(t("ui.buttons.filter_points", lang), key="btn_pt1", use_container_width=True):
+                st.session_state.consulta_faixa = {"faixa": faixa, "val": val}
+            
+            if st.session_state.consulta_faixa:
+                m = make_base_map(DATA, lang=lang)
+                emoc_faixa(DATA, st.session_state.consulta_faixa["faixa"], st.session_state.consulta_faixa["val"], m, ICON_REPO, lang=lang)
+                folium.LayerControl(collapsed=False).add_to(m)
+                st_folium(m, key="query_map_age", use_container_width=True, height=350)
 
         # Gênero
         with col2:
             st.subheader(t("ui.select.gender", lang))
-            # ----- MODIFICAÇÃO AQUI -----
             gen = st.selectbox(
                 "",
                 lista_genero(),
-                format_func=lambda genero: t(f"data.gender.{genero}", lang), # Traduz o gênero
-                key="gen_q"
+                format_func=lambda genero: t(f"data.gender.{genero}", lang) if genero else "---",
+                key="gen_q",
             )
             choices2 = valence_choices(lang)
             val2 = st.multiselect(
@@ -259,58 +264,35 @@ def page_consultas():
                 key="val_pt2",
             )
 
-            b3, b4 = st.columns(2)
-            if b3.button(t("ui.buttons.filter_gender", lang), key="btn_pt2", use_container_width=True):
-                if gen:
-                    # Salva os parâmetros da consulta no estado
-                    st.session_state.consulta_ativa = {"tipo": "genero", "gen": gen, "val2": val2}
-                else:
-                    st.warning("Por favor, selecione um gênero.")
+            if st.button(t("ui.buttons.filter_gender", lang), key="btn_pt2", use_container_width=True):
+                st.session_state.consulta_genero = {"gen": gen, "val2": val2}
 
-            if b4.button("Limpar", key="clear_pt2", use_container_width=True):
-                st.session_state.consulta_ativa = None
-                st.rerun()
-
+            if st.session_state.consulta_genero:
+                m = make_base_map(DATA, lang=lang)
+                emoc_genero(DATA, st.session_state.consulta_genero["gen"], st.session_state.consulta_genero["val2"], m, ICON_REPO, lang=lang)
+                folium.LayerControl(collapsed=False).add_to(m)
+                st_folium(m, key="query_map_gender", use_container_width=True, height=350)
+                
     # ---------- POR LINHAS ----------
     with tab_ln:
         road_codes = lista_val_vias_codes()
-        choices_ln = valence_choices(lang)
-        code2label_ln = dict(choices_ln)
+        choices = valence_choices(lang)
+        code2label = dict(choices)
         vlc = st.multiselect(
             t("ui.select.valences_roads", lang),
             options=road_codes,
-            format_func=lambda code: code2label_ln.get(code, code),
+            format_func=lambda code: code2label.get(code, code),
             key="val_ln",
         )
-        b5, b6 = st.columns([3,1]) # Botão de filtrar maior
-        if b5.button(t("ui.buttons.filter_roads", lang), key="btn_ln", use_container_width=True):
-            if vlc:
-                # Salva os parâmetros da consulta no estado
-                st.session_state.consulta_ativa = {"tipo": "vias", "vlc": vlc}
-            else:
-                st.warning("Por favor, selecione ao menos uma valência.")
+        if st.button(t("ui.buttons.filter_roads", lang), key="btn_ln", use_container_width=True):
+            st.session_state.consulta_vias = {"vlc": vlc}
 
-        if b6.button("Limpar", key="clear_ln", use_container_width=True):
-            st.session_state.consulta_ativa = None
-            st.rerun()
-
-    # --- LÓGICA DE EXIBIÇÃO DO MAPA ---
-    # Fica fora das abas e colunas, e verifica o estado da sessão
-    if st.session_state.consulta_ativa:
-        st.divider()
-        m = make_base_map(DATA, lang=lang)
-        
-        consulta = st.session_state.consulta_ativa
-        if consulta["tipo"] == "faixa":
-            emoc_faixa(DATA, consulta["faixa"], consulta["val"], m, ICON_REPO, lang=lang)
-        elif consulta["tipo"] == "genero":
-            emoc_genero(DATA, consulta["gen"], consulta["val2"], m, ICON_REPO, lang=lang)
-        elif consulta["tipo"] == "vias":
-            vias_valencia(DATA, consulta["vlc"], m, lang=lang)
-
-        folium.LayerControl(collapsed=False).add_to(m)
-        # Uma única chamada st_folium com uma key fixa
-        st_folium(m, key="query_map", use_container_width=True, height=600)
+        if st.session_state.consulta_vias:
+            m = make_base_map(DATA, lang=lang)
+            vias_valencia(DATA, st.session_state.consulta_vias["vlc"], m, lang=lang)
+            folium.LayerControl(collapsed=False).add_to(m)
+            st_folium(m, key="query_map_lines", use_container_width=True, height=600)
+            
 def page_sobre():
     st.header(t("ui.about", lang))
     st.markdown(t("about.body_md", lang))
