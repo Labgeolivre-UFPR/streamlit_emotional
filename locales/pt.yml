@@ -120,8 +120,7 @@ data:
     "Decepção, Frustração, Insatisfação": "Decepção, Frustração, Insatisfação"
   age_range:
     "De 18 a 24 anos": "De 18 a 24 anos"
-    "De 25 a 34 anos": "De 25 a 34 anos"
-    "De 35 a 44 anos": "De 35 a 44 anos"
-    "De 45 a 54 anos": "De 45 a 54 anos"
-    "De 55 a 64 anos": "De 55 a 64 anos"
-    "65 anos ou mais": "65 anos ou mais"
+    "De 25 a 29 anos": "De 25 a 29 anos"
+    "De 30 a 34 anos": "De 30 a 34 anos"
+    "De 35 a 39 anos": "De 35 a 39 anos"
+    "De 40 a 44 anos": "De 40 a 44 anos"

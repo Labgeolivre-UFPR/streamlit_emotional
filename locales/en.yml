@@ -119,8 +119,8 @@ data:
     "Decepção, Frustração, Insatisfação": "Disappointment, Frustration, Dissatisfaction"
   age_range:
     "De 18 a 24 anos": "18 to 24 years old"
-    "De 25 a 34 anos": "25 to 34 years old"
-    "De 35 a 44 anos": "35 to 44 years old"
-    "De 45 a 54 anos": "45 to 54 years old"
-    "De 55 a 64 anos": "55 to 64 years old"
-    "65 anos ou mais": "65 years or older"    
+    "De 25 a 29 anos": "25 to 29 years old"
+    "De 30 a 34 anos": "30 to 34 years old"
+    "De 35 a 39 anos": "35 to 39 years old"
+    "De 40 a 44 anos": "40 to 44 years old"
+   
