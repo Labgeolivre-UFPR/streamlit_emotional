@@ -117,3 +117,10 @@ data:
     "Medo de acidentes, Atropelamento": "Fear of accidents, Being run over"
     "Inveja, Dor de Cotovelo, Desejo, Ambição, Proteção contra Inveja": "Envy, Jealousy, Desire, Ambition, Protection against Envy"
     "Decepção, Frustração, Insatisfação": "Disappointment, Frustration, Dissatisfaction"
+  age_range:
+    "De 18 a 24 anos": "18 to 24 years old"
+    "De 25 a 34 anos": "25 to 34 years old"
+    "De 35 a 44 anos": "35 to 44 years old"
+    "De 45 a 54 anos": "45 to 54 years old"
+    "De 55 a 64 anos": "55 to 64 years old"
+    "65 anos ou mais": "65 years or older"    
