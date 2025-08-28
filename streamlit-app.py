@@ -199,7 +199,7 @@ def page_explorar():
         if vlc:
             vias_valencia(DATA, vlc, m, lang=lang)
         # Se quiser mostrar todas as vias quando nada for selecionado, remova o 'if'
-    folium.LayerControl(collapsed=False).add_to(m)
+    folium.LayerControl(collapsed=True).add_to(m)
     st_folium(m, key="explore_map", use_container_width=True, height=700)
 
 # streamlit-app.py (substitua a função inteira)
@@ -244,7 +244,7 @@ def page_consultas():
             if st.session_state.consulta_faixa:
                 m = make_base_map(DATA, lang=lang)
                 emoc_faixa(DATA, st.session_state.consulta_faixa["faixa"], st.session_state.consulta_faixa["val"], m, ICON_REPO, lang=lang)
-                folium.LayerControl(collapsed=False).add_to(m)
+                folium.LayerControl(collapsed=True).add_to(m)
                 st_folium(m, key="query_map_age", use_container_width=True, height=350)
 
         # Gênero
@@ -270,7 +270,7 @@ def page_consultas():
             if st.session_state.consulta_genero:
                 m = make_base_map(DATA, lang=lang)
                 emoc_genero(DATA, st.session_state.consulta_genero["gen"], st.session_state.consulta_genero["val2"], m, ICON_REPO, lang=lang)
-                folium.LayerControl(collapsed=False).add_to(m)
+                folium.LayerControl(collapsed=True).add_to(m)
                 st_folium(m, key="query_map_gender", use_container_width=True, height=350)
                 
     # ---------- POR LINHAS ----------
@@ -290,7 +290,7 @@ def page_consultas():
         if st.session_state.consulta_vias:
             m = make_base_map(DATA, lang=lang)
             vias_valencia(DATA, st.session_state.consulta_vias["vlc"], m, lang=lang)
-            folium.LayerControl(collapsed=False).add_to(m)
+            folium.LayerControl(collapsed=True).add_to(m)
             st_folium(m, key="query_map_lines", use_container_width=True, height=600)
             
 def page_sobre():
